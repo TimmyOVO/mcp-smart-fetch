@@ -100,7 +100,7 @@ export const CompositeAnimation: React.FC<CompositeAnimationProps> = ({
       {enableParticles && (
         <canvas
           ref={particlesCanvasRef}
-          className="absolute inset-0 w-full h-full pointer-events-none"
+          className="absolute inset-0 w-full h-full"
           style={{ zIndex: 3 }}
         />
       )}
