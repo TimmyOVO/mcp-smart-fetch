@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  mcp-smart-fetch:
+    build: .
+    container_name: mcp-smart-fetch
+    restart: unless-stopped
+    environment:
+      # LLM 配置 (必需)
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_API_ENDPOINT=${LLM_API_ENDPOINT:-https://api.openai.com/v1/chat/completions}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4}
+
+      # LLM 高级配置 (可选)
+      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS:-32768}
+      - LLM_TEMPERATURE=${LLM_TEMPERATURE:-0.7}
+      - LLM_TIMEOUT_SECONDS=${LLM_TIMEOUT_SECONDS:-120}
+
+      # 服务器配置 (可选)
+      - SERVER_HOST=${SERVER_HOST:-0.0.0.0}
+      - SERVER_PORT=${SERVER_PORT:-8080}
+      - SERVER_MAX_CONNECTIONS=${SERVER_MAX_CONNECTIONS:-100}
+
+      # 处理配置 (可选)
+      - TEMPLATES_DIR=${TEMPLATES_DIR:-templates}
+      - DEFAULT_TEMPLATE=${DEFAULT_TEMPLATE:-default}
+      - MAX_DOCUMENT_SIZE_MB=${MAX_DOCUMENT_SIZE_MB:-10}
+      - CHUNK_SIZE=${CHUNK_SIZE:-4000}
+      - ENABLE_PREPROCESSING=${ENABLE_PREPROCESSING:-true}
+
+      # 清理配置 (可选)
+      - ENABLE_CLEANING=${ENABLE_CLEANING:-true}
+      - REMOVE_BASE64_IMAGES=${REMOVE_BASE64_IMAGES:-true}
+      - REMOVE_BINARY_DATA=${REMOVE_BINARY_DATA:-true}
+      - REMOVE_HTML_TAGS=${REMOVE_HTML_TAGS:-true}
+      - NORMALIZE_WHITESPACE=${NORMALIZE_WHITESPACE:-true}
+      - MAX_STRING_LENGTH=${MAX_STRING_LENGTH:-1000}
+
+    volumes:
+      # 挂载模板目录
+      - ./templates:/app/templates
+      # 挂载配置文件（可选，环境变量会覆盖配置文件）
+      - ./config:/app/config
+
+    # 如果需要作为 MCP 服务器运行，取消注释以下行
+    # command: ["serve"]
+
+    # 如果需要暴露端口（非 MCP 服务器模式），取消注释以下行
+    # ports:
+    #   - "8080:8080"
+
+  # 示例：作为 MCP 服务器运行
+  mcp-server:
+    build: .
+    container_name: mcp-smart-fetch-server
+    restart: unless-stopped
+    command: ["serve"]
+    environment:
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_API_ENDPOINT=${LLM_API_ENDPOINT}
+      - LLM_MODEL=${LLM_MODEL}
+    volumes:
+      - ./templates:/app/templates
+      - ./config:/app/config
+    # MCP 服务器使用 stdio，不需要暴露端口

@@ -1,0 +1,74 @@
+[package]
+name = "mcp-smart-fetch"
+version = "0.1.0"
+edition = "2021"
+authors = ["Smart Fetch Team"]
+description = "智能文档内容提取服务"
+
+[dependencies]
+rmcp = { git = "https://github.com/modelcontextprotocol/rust-sdk", branch = "main", features = ["transport-io", "client"] }
+
+# 异步运行时
+tokio = { version = "1.40", features = ["full"] }
+
+# HTTP客户端
+reqwest = { version = "0.12", features = ["json", "stream"] }
+
+# 序列化
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# 模板引擎
+handlebars = "5.1"
+
+# 配置管理
+config = "0.14"
+toml = "0.8"
+
+# 错误处理
+anyhow = "1.0"
+thiserror = "1.0"
+
+# 日志记录
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-indicatif = "0.3"
+
+# 命令行解析
+clap = { version = "4.5", features = ["derive"] }
+
+# 进度条
+indicatif = "0.17"
+console = "0.15"
+
+# 文件处理
+walkdir = "2.5"
+
+# 正则表达式
+regex = "1.10"
+
+# 时间处理
+chrono = { version = "0.4", features = ["serde"] }
+
+# UUID生成
+uuid = { version = "1.11", features = ["v4"] }
+
+# 测试依赖
+tempfile = "3.8"
+
+[dev-dependencies]
+tokio-test = "0.4"
+mockito = "1.5"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+# [[bench]]
+# name = "extract_benchmark"
+# harness = false
+
+[lib]
+name = "mcp_smart_fetch"
+path = "src/lib.rs"
+
+[[bin]]
+name = "mcp-smart-fetch"
+path = "src/main.rs"
